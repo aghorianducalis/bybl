@@ -427,29 +427,64 @@ create table civic_civilization
 
 # ========================================================================================
 
+# interface-unit relations
 
-# create table promotion_types
-# (
-#     id         bigint unsigned auto_increment
-#         primary key,
-#     name       varchar(255) not null,
-#     created_at timestamp    null,
-#     updated_at timestamp    null
-# )
-#     collate = utf8mb4_unicode_ci;
+create table unit_promotions
+(
+    id              bigint unsigned auto_increment primary key,
+    interface_id    bigint unsigned not null,
+    unit_id         bigint unsigned not null,
+    created_at      timestamp null,
+    updated_at      timestamp null,
+    constraint unit_promotions_interface_id_foreign
+        foreign key (interface_id) references interfaces (id),
+    constraint unit_promotions_unit_id_foreign
+        foreign key (unit_id) references units (id)
+)
+    collate = utf8mb4_unicode_ci;
 
-# create table promotions
-# (
-#     id                bigint unsigned auto_increment
-#         primary key,
-#     promotion_type_id bigint unsigned not null,
-#     unit_id           bigint unsigned not null,
-#     created_at        timestamp       null,
-#     updated_at        timestamp       null,
-#     constraint promotions_promotion_type_id_foreign
-#         foreign key (promotion_type_id) references promotion_types (id),
-#     constraint promotions_unit_id_foreign
-#         foreign key (unit_id) references units (id)
-# )
-#     collate = utf8mb4_unicode_ci;
+# ========================================================================================
 
+# spacetime-unit relations
+
+/*
+create table spacetime_unit
+(
+    id              bigint unsigned auto_increment primary key,
+    spacetime_id    bigint unsigned not null,
+    unit_id         bigint unsigned not null,
+    created_at      timestamp null,
+    updated_at      timestamp null,
+    constraint spacetime_unit_spacetime_id_foreign
+        foreign key (spacetime_id) references spacetimes (id),
+    constraint spacetime_unit_unit_id_foreign
+        foreign key (unit_id) references units (id)
+)
+    collate = utf8mb4_unicode_ci;
+*/
+
+# ========================================================================================
+
+# ========================================================================================
+
+# interface-building relations
+
+/*
+create table building_promotions
+(
+    id              bigint unsigned auto_increment primary key,
+    interface_id    bigint unsigned not null,
+    building_id     bigint unsigned not null,
+    created_at      timestamp null,
+    updated_at      timestamp null,
+    constraint building_promotions_interface_id_foreign
+        foreign key (interface_id) references interfaces (id),
+    constraint building_promotions_building_id_foreign
+        foreign key (building_id) references buildings (id)
+)
+    collate = utf8mb4_unicode_ci;
+*/
+
+# ========================================================================================
+
+# ========================================================================================
