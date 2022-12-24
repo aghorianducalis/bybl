@@ -2,12 +2,25 @@
 
 # ========================================================================================
 
-# interface: describes behaviour
+# spacetime: describes some physical area
 
-create table interfaces
+create table spacetimes
 (
-    id         bigint unsigned auto_increment
-        primary key,
+    id          bigint unsigned auto_increment primary key,
+    created_at  timestamp null,
+    updated_at  timestamp null
+)
+    collate = utf8mb4_unicode_ci;
+
+
+# ========================================================================================
+
+
+# reference frame
+
+create table reference_frames
+(
+    id         bigint unsigned auto_increment primary key,
     name       varchar(255) not null,
     created_at timestamp null,
     updated_at timestamp null
@@ -15,16 +28,72 @@ create table interfaces
     collate = utf8mb4_unicode_ci;
 
 
-# spacetime: describes some physical area
+# ========================================================================================
 
-create table spacetimes
+
+# manifolds: curves, surfaces, 4-dimensional manifolds etc.
+
+create table curves
+(
+    id                 bigint unsigned auto_increment primary key,
+    reference_frame_id bigint unsigned not null,
+    spacetime_id       bigint unsigned not null,
+    # ct x
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint curves_reference_frame_id_foreign
+        foreign key (reference_frame_id) references reference_frames (id),
+    constraint curves_spacetime_id_foreign
+        foreign key (spacetime_id) references spacetimes (id)
+)
+    collate = utf8mb4_unicode_ci;
+
+create table surfaces
+(
+    id                 bigint unsigned auto_increment primary key,
+    reference_frame_id bigint unsigned not null,
+    spacetime_id       bigint unsigned not null,
+    # ct x y
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint surfaces_reference_frame_id_foreign
+        foreign key (reference_frame_id) references reference_frames (id),
+    constraint surfaces_spacetime_id_foreign
+        foreign key (spacetime_id) references spacetimes (id)
+)
+    collate = utf8mb4_unicode_ci;
+
+create table manifolds
+(
+    id                 bigint unsigned auto_increment primary key,
+    reference_frame_id bigint unsigned not null,
+    spacetime_id       bigint unsigned not null,
+    # ct x y z
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint manifolds_reference_frame_id_foreign
+        foreign key (reference_frame_id) references reference_frames (id),
+    constraint manifolds_spacetime_id_foreign
+        foreign key (spacetime_id) references spacetimes (id)
+)
+    collate = utf8mb4_unicode_ci;
+
+
+# ========================================================================================
+
+# interface: describes behaviour
+
+create table interfaces
 (
     id         bigint unsigned auto_increment primary key,
-    # coordinates: ct x y z
+    name       varchar(255) not null,
     created_at timestamp null,
     updated_at timestamp null
 )
     collate = utf8mb4_unicode_ci;
+
+
+# ========================================================================================
 
 # particle: spacetime-interface relation (parts of concrete thing that implements concrete interface)
 
@@ -45,9 +114,51 @@ create table particles
 
 # ========================================================================================
 
+create table curve_particle
+(
+    id                 bigint unsigned auto_increment primary key,
+    curve_id           bigint unsigned not null,
+    particle_id        bigint unsigned not null,
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint curve_particle_curve_id_foreign
+        foreign key (curve_id) references curves (id),
+    constraint curve_particle_particle_id_foreign
+        foreign key (particle_id) references particles (id)
+)
+    collate = utf8mb4_unicode_ci;
+
+create table particle_surface
+(
+    id                 bigint unsigned auto_increment primary key,
+    particle_id        bigint unsigned not null,
+    surface_id         bigint unsigned not null,
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint particle_surface_surface_id_foreign
+        foreign key (surface_id) references surfaces (id),
+    constraint particle_surface_particle_id_foreign
+        foreign key (particle_id) references particles (id)
+)
+    collate = utf8mb4_unicode_ci;
+
+create table manifold_particle
+(
+    id                 bigint unsigned auto_increment primary key,
+    manifold_id        bigint unsigned not null,
+    particle_id        bigint unsigned not null,
+    created_at         timestamp null,
+    updated_at         timestamp null,
+    constraint manifold_particle_manifold_id_foreign
+        foreign key (manifold_id) references manifolds (id),
+    constraint manifold_particle_particle_id_foreign
+        foreign key (particle_id) references particles (id)
+)
+    collate = utf8mb4_unicode_ci;
+
 # ========================================================================================
 
-# examples: terrain resources, units, settlements, cities, civilizations, civics, technologies
+# Objects: terrain resources, units, settlements, cities, civilizations, civics, technologies
 
 
 create table terrain_resources
@@ -274,12 +385,6 @@ create table civilization_technology
 )
     collate = utf8mb4_unicode_ci;
 
-
-# ========================================================================================
-
-# ========================================================================================
-
-/*
 create table civics
 (
     id              bigint unsigned auto_increment primary key,
@@ -316,32 +421,9 @@ create table civic_civilization
         foreign key (civilization_id) references civilizations (id)
 )
     collate = utf8mb4_unicode_ci;
-*/
 
-/*
-create table maps
-(
-    id                  bigint unsigned auto_increment
-        primary key,
-    created_at          timestamp            null,
-    updated_at          timestamp            null
-)
-    collate = utf8mb4_unicode_ci;
 
-create table map_spacetime
-(
-    id              bigint unsigned auto_increment
-        primary key,
-    map_id bigint unsigned not null,
-    particle_id   bigint unsigned not null,
-    created_at      timestamp       null,
-    updated_at      timestamp       null,
-    constraint map_spacetime_map_id_foreign
-        foreign key (map_id) references maps (id),
-    constraint map_spacetime_spacetime_id_foreign
-        foreign key (particle_id) references spacetimes (id)
-)
-    collate = utf8mb4_unicode_ci;*/
+# ========================================================================================
 
 # ========================================================================================
 
